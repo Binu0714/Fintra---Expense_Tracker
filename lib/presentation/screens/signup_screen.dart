@@ -98,7 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Center(
                   child: Image.asset(
                     logoAsset,
-                    height: 200,
+                    height: 210,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 90,

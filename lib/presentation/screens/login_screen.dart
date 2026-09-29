@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_typography.dart';
 import 'signup_screen.dart';
+import 'main_shell_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,6 +35,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
     setState(() => _isLoading = false);
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+        const MainShellScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -157,13 +169,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelStyle: TextStyle(color: textSecondary, fontSize: 14),
                             prefixIcon: const Icon(Icons.email_outlined, color: AppColors.primaryMint, size: 20),
                           ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) return 'Email is required';
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
-                              return 'Enter a valid email address';
-                            }
-                            return null;
-                          },
+                          // validator: (val) {
+                          //   if (val == null || val.trim().isEmpty) return 'Email is required';
+                          //   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
+                          //     return 'Enter a valid email address';
+                          //   }
+                          //   return null;
+                          // },
                         ),
 
                         const SizedBox(height: 18),
@@ -188,11 +200,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                             ),
                           ),
-                          validator: (val) {
-                            if (val == null || val.isEmpty) return 'Password is required';
-                            if (val.length < 6) return 'Password must be at least 6 characters';
-                            return null;
-                          },
+                          // validator: (val) {
+                          //   if (val == null || val.isEmpty) return 'Password is required';
+                          //   if (val.length < 6) return 'Password must be at least 6 characters';
+                          //   return null;
+                          // },
                         ),
 
                         const SizedBox(height: 12),
