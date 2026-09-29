@@ -20,6 +20,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _email = 'mateen@fintra.app';
   bool _notificationsEnabled = true;
 
+  late bool _isDarkMode = ThemeController.isDark;
+
   void _openEditProfile() {
     showModalBottomSheet(
       context: context,
@@ -152,12 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: SettingsSectionCard(
                   title: 'Finance & Security',
                   children: [
-                    SettingsActionTile(
-                      icon: Icons.attach_money_rounded,
-                      title: 'Default Currency',
-                      valueText: 'USD (\$)',
-                      onTap: () {},
-                    ),
+
                     SettingsActionTile(
                       icon: Icons.cloud_sync_outlined,
                       title: 'Firebase Cloud Backup',

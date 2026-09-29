@@ -15,125 +15,104 @@ class UserProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: AppColors.pitchDark, // Pitch dark matching dashboard hero card
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.4),
-            blurRadius: 22,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Gradient Ring Avatar with Check Badge
-          Stack(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(2.5),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
-                ),
-                child: CircleAvatar(
-                  radius: 28,
-                  backgroundColor: AppColors.darkSurfaceVariant,
-                  child: Text(
-                    userName.isNotEmpty ? userName[0].toUpperCase() : 'M',
-                    style: const TextStyle(
-                      color: AppColors.primaryMint,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 22,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryMint,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.check, size: 10, color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-          // User Name & Email on Pitch Dark
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Flexible(
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Centered Avatar with Floating Edit Pencil Badge
+            GestureDetector(
+              onTap: onEdit,
+              child: Stack(
+                children: [
+                  // Outer Avatar
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 46,
+                      backgroundColor: isDark ? AppColors.darkSurfaceVariant : const Color(0xFFE2E8F0),
                       child: Text(
-                        userName,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryMint.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        'PRO',
+                        userName.isNotEmpty ? userName[0].toUpperCase() : 'S',
                         style: TextStyle(
-                          color: AppColors.primaryMint,
-                          fontSize: 10,
+                          color: isDark ? AppColors.white : AppColors.black,
                           fontWeight: FontWeight.w900,
+                          fontSize: 34,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  email,
-                  style: const TextStyle(
-                    color: AppColors.darkTextSecondary,
-                    fontSize: 13,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
 
-          // Edit Profile Action Button
-          InkWell(
-            onTap: onEdit,
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.darkSurfaceVariant,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.darkBorder),
+                  // Floating Edit Pencil Badge (matching reference)
+                  Positioned(
+                    bottom: 2,
+                    right: 2,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentBlue, // Vibrant blue from reference
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+                          width: 3,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.accentBlue.withValues(alpha: 0.35),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.edit_rounded,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.edit_rounded, size: 18, color: AppColors.primaryMint),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+
+            // Centered User Full Name
+            Text(
+              userName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.4,
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            // Centered Email Subtitle
+            Text(
+              email,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textSecondary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
