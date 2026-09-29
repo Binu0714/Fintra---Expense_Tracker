@@ -8,7 +8,9 @@ import '../widgets/dashboard/overview_chart_card.dart';
 import '../widgets/dashboard/total_expenses_hero_card.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final String userName;
+
+  const DashboardScreen({super.key, this.userName = 'User'});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +26,12 @@ class DashboardScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const SizedBox(height: 10),
           StaggeredSlideFade(
             index: 0,
             child: DashboardHeader(
               dateString: todayStr,
-              userName: 'Mateen',
+              userName: userName,
             ),
           ),
           const SizedBox(height: 20),

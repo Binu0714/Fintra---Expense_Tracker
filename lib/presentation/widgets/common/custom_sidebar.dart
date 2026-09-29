@@ -5,11 +5,17 @@ import '../../../core/theme/app_colors.dart';
 class CustomSidebar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemSelected;
+  final String userName;
+  final String userEmail;
+  final String userInitial;
 
   const CustomSidebar({
     super.key,
     required this.selectedIndex,
     required this.onItemSelected,
+    this.userName = 'User',
+    this.userEmail = 'user@fintra.app',
+    this.userInitial = 'U',
   });
 
   @override
@@ -65,6 +71,7 @@ class CustomSidebar extends StatelessWidget {
               const SizedBox(height: 16),
 
               // 2. Embossed Premium User Card
+              // 2. Embossed Premium User Card (Dynamic from Firebase)
               StaggeredSlideFade(
                 index: 1,
                 duration: const Duration(milliseconds: 500),
@@ -90,12 +97,12 @@ class CustomSidebar extends StatelessWidget {
                           shape: BoxShape.circle,
                           gradient: AppColors.primaryGradient,
                         ),
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius: 19,
                           backgroundColor: AppColors.darkSurfaceVariant,
                           child: Text(
-                            'M',
-                            style: TextStyle(
+                            userInitial,
+                            style: const TextStyle(
                               color: AppColors.primaryMint,
                               fontWeight: FontWeight.w800,
                               fontSize: 16,
@@ -109,21 +116,24 @@ class CustomSidebar extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Mateen',
+                              userName,
                               style: TextStyle(
                                 color: textPrimary,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 15,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'mateen@fintra.app',
+                              userEmail,
                               style: TextStyle(
                                 color: textSecondary,
                                 fontSize: 12,
                               ),
                               overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ],
                         ),

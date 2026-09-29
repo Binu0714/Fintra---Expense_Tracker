@@ -84,7 +84,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Pill drag handle
+              // 1. Pill drag handle
               Center(
                 child: Container(
                   width: 44,
@@ -97,14 +97,14 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 16),
 
-              // Title Row
+              // 2. Title Row with Close
               StaggeredSlideFade(
                 index: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Account Settings',
+                      'Account Profile',
                       style: TextStyle(
                         color: textPrimary,
                         fontSize: 18,
@@ -120,50 +120,98 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // Interactive Avatar Hero Picker
+              // 3. Centered Avatar Section (Matching UserProfileCard)
               StaggeredSlideFade(
                 index: 1,
                 child: Center(
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
+                  child: Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: AppColors.primaryGradient,
-                        ),
-                        child: CircleAvatar(
-                          radius: 38,
-                          backgroundColor: AppColors.darkSurfaceVariant,
-                          child: Text(
-                            _nameController.text.isNotEmpty ? _nameController.text[0].toUpperCase() : 'M',
-                            style: const TextStyle(
-                              color: AppColors.primaryMint,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 28,
+                      Stack(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                                width: 2,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 46,
+                              backgroundColor: isDark ? AppColors.darkSurfaceVariant : const Color(0xFFE2E8F0),
+                              child: Text(
+                                _nameController.text.isNotEmpty
+                                    ? _nameController.text[0].toUpperCase()
+                                    : 'M',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 34,
+                                ),
+                              ),
                             ),
                           ),
+                          // Floating Blue Pencil Badge
+                          Positioned(
+                            bottom: 2,
+                            right: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentBlue,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.accentBlue.withValues(alpha: 0.35),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.edit_rounded,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _nameController.text.isNotEmpty ? _nameController.text : 'Mateen',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppColors.pitchDark,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primaryMint, width: 1.5),
+                      const SizedBox(height: 2),
+                      Text(
+                        _emailController.text.isNotEmpty ? _emailController.text : 'mateen@fintra.app',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
-                        child: const Icon(Icons.camera_alt_rounded, size: 14, color: AppColors.primaryMint),
                       ),
                     ],
                   ),
                 ),
               ),
+
               const SizedBox(height: 24),
 
-              // Name Field Card
+              // 4. Name Field
               StaggeredSlideFade(
                 index: 2,
                 child: TextFormField(
@@ -179,11 +227,12 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 16),
 
-              // Email Field Card
+              // 5. Email Field
               StaggeredSlideFade(
                 index: 3,
                 child: TextFormField(
                   controller: _emailController,
+                  onChanged: (_) => setState(() {}),
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: textPrimary, fontSize: 15),
                   decoration: const InputDecoration(
@@ -201,7 +250,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 28),
 
-              // Save Action Button
+              // 6. Save Action Button
               StaggeredSlideFade(
                 index: 4,
                 child: Container(

@@ -9,7 +9,14 @@ import '../widgets/settings/settings_toggle_tile.dart';
 import '../widgets/settings/user_profile_card.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final String userName;
+  final String userEmail;
+
+  const SettingsScreen({
+    super.key,
+    required this.userName,
+    required this.userEmail,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -96,8 +103,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               StaggeredSlideFade(
                 index: 0,
                 child: UserProfileCard(
-                  userName: _userName,
-                  email: _email,
+                  userName: widget.userName,
+                  email: widget.userEmail,
                   onEdit: _openEditProfile,
                 ),
               ),

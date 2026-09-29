@@ -48,20 +48,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => const AddEditExpenseBottomSheet(),
-          );
-        },
-        backgroundColor: AppColors.primaryMint,
-        elevation: 6,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add_rounded, color: AppColors.black, size: 28),
-      ),
       body: SafeArea(
         child: StreamBuilder<List<ExpenseModel>>(
           stream: _expenseRepository.getExpensesStream(),

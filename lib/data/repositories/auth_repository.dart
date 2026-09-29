@@ -16,7 +16,6 @@ class AuthRepository {
   User? get currentUser => _auth.currentUser;
 
   // signup
-
   Future<UserCredential> signUpWithEmail({
     required String name,
     required String email,
@@ -52,7 +51,6 @@ class AuthRepository {
   }
 
   // Login
-
   Future<UserCredential> loginWithEmail({
     required String email,
     required String password,
@@ -67,6 +65,33 @@ class AuthRepository {
       throw _handleAuthException(e);
     } catch (e) {
       throw 'An unexpected error occurred. Please try again.';
+    }
+  }
+
+  // get user data
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getUserProfileStream() {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not logged in');
+    return _firestore.collection('users').doc(user.uid).snapshots();
+  }
+
+  Future<void> updateUserProfile({
+    required String name,
+    required String email,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) throw Exception('User not logged in');
+
+      await user.updateDisplayName(name.trim());
+
+      await _firestore.collection('users').doc(user.uid).update({
+        'name': name.trim(),
+        'email': email.trim().toLowerCase(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw 'Failed to update profile: $e';
     }
   }
 
