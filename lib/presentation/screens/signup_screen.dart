@@ -139,7 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Text(
                           'Create Account',
                           textAlign: TextAlign.center,
-                          style: AppTypography.headingMedium.copyWith(color: textPrimary),
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: textPrimary),
                         ),
 
                         const SizedBox(height: 6),
@@ -147,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Text(
                           'Start owning your financial future with Fintra.',
                           textAlign: TextAlign.center,
-                          style: AppTypography.bodySmall.copyWith(color: textSecondary),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: textSecondary),
                         ),
                         const SizedBox(height: 24),
 
@@ -274,7 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             )
                                 : Text(
                               'Create Account',
-                              style: AppTypography.label.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                 color: Colors.black,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -302,13 +302,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: AppTypography.bodyMedium.copyWith(color: textSecondary),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textSecondary),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Text(
                         'Log In',
-                        style: AppTypography.label.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
                           color: AppColors.primaryMint,
                           fontWeight: FontWeight.w700,
                         ),

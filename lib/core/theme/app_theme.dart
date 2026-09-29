@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_typography.dart';
 
 class AppTheme {
   AppTheme._();
@@ -9,11 +10,13 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.lightBackground,
+      textTheme: AppTypography.lightTextTheme,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryMint,
         surface: AppColors.lightCard,
         error: AppColors.error,
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.lightInput,
@@ -31,6 +34,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
+
     );
   }
 
@@ -39,11 +43,13 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.darkBackground,
+      textTheme: AppTypography.darkTextTheme,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryMint,
         surface: AppColors.darkCard,
         error: AppColors.error,
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkInput,
@@ -61,6 +67,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
+
     );
   }
 }

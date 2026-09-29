@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Text(
                           'Welcome Back',
                           textAlign: TextAlign.center,
-                          style: AppTypography.headingMedium.copyWith(color: textPrimary),
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
 
                         const SizedBox(height: 6),
@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Text(
                           'Please enter your credentials to log in.',
                           textAlign: TextAlign.center,
-                          style: AppTypography.bodySmall.copyWith(color: textSecondary),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(height: 24),
 
@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: Text(
                               'Forgot Password?',
-                              style: AppTypography.bodySmall.copyWith(
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppColors.primaryMint,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                                 : Text(
                               'Log In',
-                              style: AppTypography.label.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                 color: Colors.black,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -274,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       "Don't have an account? ",
-                      style: AppTypography.bodyMedium.copyWith(color: textSecondary),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textSecondary),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.push(
@@ -283,7 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Text(
                         'Sign Up',
-                        style: AppTypography.label.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
                           color: AppColors.primaryMint,
                           fontWeight: FontWeight.w700,
                         ),
