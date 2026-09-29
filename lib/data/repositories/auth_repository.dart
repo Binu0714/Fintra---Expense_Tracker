@@ -87,19 +87,14 @@ class AuthRepository {
       final formattedName = name.trim();
       final formattedEmail = email.trim().toLowerCase();
 
-      // 1. Update Display Name in Firebase Auth
       if (user.displayName != formattedName) {
         await user.updateDisplayName(formattedName);
       }
 
-      // 2. Update Login Email in Firebase Auth
       if (user.email?.toLowerCase() != formattedEmail) {
-        // Updates the actual login credential in Firebase Authentication
         await user.verifyBeforeUpdateEmail(formattedEmail);
-        // Note: If you are using legacy Firebase Auth, you can use: await user.updateEmail(formattedEmail);
       }
 
-      // 3. Update Firestore Document
       await _firestore.collection('users').doc(user.uid).update({
         'name': formattedName,
         'email': formattedEmail,
@@ -118,6 +113,19 @@ class AuthRepository {
   // sign out
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  // forget password
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(
+        email: email.trim().toLowerCase(),
+      );
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw 'Failed to send password reset email: $e';
+    }
   }
 
   String _handleAuthException(FirebaseAuthException e) {

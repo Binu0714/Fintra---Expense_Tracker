@@ -26,24 +26,30 @@ class CustomBottomNav extends StatelessWidget {
       ),
     ];
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: cardBorder, width: 1.2),
-          boxShadow: navShadow,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildTab(0, Icons.grid_view_outlined, Icons.grid_view_rounded, 'Dashboard', isDark),
-            _buildTab(1, Icons.receipt_long_outlined, Icons.receipt_long_rounded, 'Expenses', isDark),
-            _buildTab(2, Icons.category_outlined, Icons.category_rounded, 'Categories', isDark),
-            _buildTab(3, Icons.settings_outlined, Icons.settings_rounded, 'Settings', isDark),
-          ],
+    return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      bottom: true, // Automatically calculates phone's bottom bar height!
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: cardBorder, width: 1.2),
+            boxShadow: navShadow,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildTab(0, Icons.grid_view_outlined, Icons.grid_view_rounded, 'Dashboard', isDark),
+              _buildTab(1, Icons.receipt_long_outlined, Icons.receipt_long_rounded, 'Expenses', isDark),
+              _buildTab(2, Icons.category_outlined, Icons.category_rounded, 'Categories', isDark),
+              _buildTab(3, Icons.settings_outlined, Icons.settings_rounded, 'Settings', isDark),
+            ],
+          ),
         ),
       ),
     );

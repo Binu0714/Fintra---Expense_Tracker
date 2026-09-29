@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../widgets/auth/forgot_password_bottom_sheet.dart';
 import '../widgets/common/fintra_dialog.dart';
-import 'signup_screen.dart';
 import 'main_shell_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await _authRepository.loginWithEmail(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+        email: _emailController.text.trim().toLowerCase(),
+        password: _passwordController.text.trim(),
       );
 
       if (!mounted) return;
@@ -67,6 +68,17 @@ class _LoginScreenState extends State<LoginScreen> {
         onConfirm: () {},
       );
     }
+  }
+
+  void _openForgotPassword() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ForgotPasswordBottomSheet(
+        initialEmail: _emailController.text.trim(),
+      ),
+    );
   }
 
   @override
@@ -112,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 12),
 
+              // Brand Logo
               StaggeredSlideFade(
                 index: 0,
                 duration: const Duration(milliseconds: 600),
@@ -161,9 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
-
                         const SizedBox(height: 6),
-
                         Text(
                           'Please enter your credentials to log in.',
                           textAlign: TextAlign.center,
@@ -182,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelStyle: TextStyle(color: textSecondary, fontSize: 14),
                             prefixIcon: const Icon(Icons.email_outlined, color: AppColors.primaryMint, size: 20),
                           ),
-
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) return 'Email is required';
                             if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
@@ -190,9 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             return null;
                           },
-
                         ),
-
                         const SizedBox(height: 18),
 
                         // Password Field
@@ -215,22 +223,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                             ),
                           ),
-
                           validator: (val) {
                             if (val == null || val.isEmpty) return 'Password is required';
                             if (val.length < 6) return 'Password must be at least 6 characters';
                             return null;
                           },
-
                         ),
-
                         const SizedBox(height: 12),
 
-                        // Forgot Password Link
+                        // Connected Forgot Password Action
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: _openForgotPassword, // Opens Password Reset Sheet
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: const Size(40, 26),
@@ -245,18 +250,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 24),
 
-                        // Primary Action Button
+                        // Primary Action Button (Solid Green)
                         Container(
                           height: 52,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryMint,
+                            color: const Color(0xFF00C853),
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryMint.withValues(alpha: 0.35),
+                                color: const Color(0xFF00C853).withValues(alpha: 0.35),
                                 blurRadius: 14,
                                 offset: const Offset(0, 5),
                               ),
@@ -273,14 +277,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2.2, color: Colors.black),
+                              child: CircularProgressIndicator(strokeWidth: 2.2, color: Colors.white),
                             )
-                                : Text(
+                                : const Text(
                               'Log In',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: Colors.black,
+                              style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 15,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ),
@@ -294,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 28),
 
-              // 3. Bottom Sign Up Switcher
+              // Bottom Sign Up Switcher
               StaggeredSlideFade(
                 index: 2,
                 duration: const Duration(milliseconds: 600),
