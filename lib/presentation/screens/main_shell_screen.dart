@@ -3,6 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../widgets/common/custom_sidebar.dart';
 import '../widgets/common/custom_bottom_nav.dart';
 import 'dashboard_screen.dart';
+import 'expenses_screen.dart';
 
 class MainShellScreen extends StatefulWidget {
   const MainShellScreen({super.key});
@@ -16,7 +17,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   final List<Widget> _pages = [
     const DashboardScreen(),
-    const PlaceholderPage(title: 'Expenses List & History'),
+    const ExpensesScreen(),
     const PlaceholderPage(title: 'Categories Management'),
     const PlaceholderPage(title: 'Settings & Preferences'),
   ];
