@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "910114099193",
+    "project_id": "fintra-c2c3a",
+    "storage_bucket": "fintra-c2c3a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910114099193:android:e31424d0746a6f6d497728",
+        "android_client_info": {
+          "package_name": "com.example.fintra_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdP-eWUUp9TLdNrATYUNrFc281gFFwxUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
