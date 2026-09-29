@@ -44,7 +44,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
         final userInitial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
 
         final List<Widget> pages = [
-          DashboardScreen(userName: userName),
+          DashboardScreen(
+            userName: userName,
+            onSwitchTab: (targetIndex) {
+              setState(() {
+                _currentIndex = targetIndex;
+              });
+            },
+          ),
           const ExpensesScreen(),
           const CategoriesScreen(),
           SettingsScreen(userName: userName, userEmail: userEmail),

@@ -11,7 +11,13 @@ import '../widgets/dashboard/total_expenses_hero_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   final String userName;
-  DashboardScreen({super.key, this.userName = 'User'});
+  final Function(int tabIndex)? onSwitchTab;
+
+  DashboardScreen({
+    super.key,
+    this.userName = 'User',
+    this.onSwitchTab,
+  });
 
   final ExpenseRepository _expenseRepository = ExpenseRepository();
 
@@ -38,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
               (sum, item) => sum + item.amount,
         );
 
-        final recentExpenses = allExpenses.take(2).toList();
+        final recentExpenses = allExpenses.take(3).toList();
 
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -71,7 +77,10 @@ class DashboardScreen extends StatelessWidget {
               StaggeredSlideFade(
                 index: 2,
                 child: OverviewChartCard(
-                  onViewFullReport: () {},
+                  allExpenses: allExpenses,
+                  onViewFullReport: () {
+                    onSwitchTab?.call(1);
+                  },
                 ),
               ),
               const SizedBox(height: 24),
@@ -90,17 +99,37 @@ class DashboardScreen extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    Text(
-                      '${allExpenses.length} total',
-                      style: TextStyle(
-                        color: textSecondary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                    InkWell(
+                      onTap: () {
+                        onSwitchTab?.call(1);
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        child: Row(
+                          children: [
+                            Text(
+                              'View All',
+                              style: TextStyle(
+                                color: AppColors.primaryMint,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 12,
+                              color: AppColors.primaryMint,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+
               const SizedBox(height: 8),
 
               // Real Active Items from Firestore

@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/models/expense_model.dart';
 
 class OverviewChartCard extends StatefulWidget {
+  final List<ExpenseModel> allExpenses; // Real Firestore Data passed from Dashboard!
   final VoidCallback? onViewFullReport;
 
-  const OverviewChartCard({super.key, this.onViewFullReport});
+  const OverviewChartCard({
+    super.key,
+    required this.allExpenses,
+    this.onViewFullReport,
+  });
 
   @override
   State<OverviewChartCard> createState() => _OverviewChartCardState();
 }
 
 class _OverviewChartCardState extends State<OverviewChartCard> {
-  int _selectedBarIndex = 9;
-
-  late List<DateTime> _last10Dates;
-  final List<double> _dailyExpenses = [
-    45.0, 120.0, 30.0, 85.0, 160.0, 55.0, 95.0, 40.0, 110.0, 75.0
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    _last10Dates = List.generate(10, (i) => now.subtract(Duration(days: 9 - i)));
-  }
+  int _selectedBarIndex = 6; // Defaults to Today (7th day)
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +29,19 @@ class _OverviewChartCardState extends State<OverviewChartCard> {
     final cardBorder = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final variantBg = isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant;
 
-    final maxSpend = _dailyExpenses.reduce((a, b) => a > b ? a : b);
+    // 1. Generate the last 7 calendar days ending today
+    final now = DateTime.now();
+    final last7Dates = List.generate(7, (i) => now.subtract(Duration(days: 6 - i)));
+
+    // 2. Aggregate REAL expense totals for each of the 7 days
+    final List<double> dailyTotals = last7Dates.map((date) {
+      return widget.allExpenses.where((expense) {
+        return DateUtils.isSameDay(expense.date, date);
+      }).fold(0.0, (sum, item) => sum + item.amount);
+    }).toList();
+
+    // 3. Find the day with maximum expense
+    final double maxSpend = dailyTotals.reduce((a, b) => a > b ? a : b);
 
     return Container(
       padding: const EdgeInsets.all(22),
@@ -45,7 +51,7 @@ class _OverviewChartCardState extends State<OverviewChartCard> {
         border: Border.all(color: cardBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+            color: AppColors.black.withValues(alpha: isDark ? 0.35 : 0.05),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -70,7 +76,7 @@ class _OverviewChartCardState extends State<OverviewChartCard> {
                     ),
                   ),
                   Text(
-                    'Daily Report (Last 10 Days)',
+                    'Daily Report (Last 7 Days)',
                     style: TextStyle(color: textSecondary, fontSize: 12),
                   ),
                 ],
@@ -85,103 +91,117 @@ class _OverviewChartCardState extends State<OverviewChartCard> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
-          // 10-Day Horizontal Scrollable Bar Chart
+          // 7-Day Chart Row
           SizedBox(
             height: 160,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: List.generate(10, (index) {
-                  final isSelected = index == _selectedBarIndex;
-                  final date = _last10Dates[index];
-                  final dayNumber = DateFormat('d').format(date);
-                  final monthStr = DateFormat('MMM').format(date);
-                  final spendAmount = _dailyExpenses[index];
-                  final heightRatio = (spendAmount / maxSpend).clamp(0.2, 1.0);
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(7, (index) {
+                final isSelected = index == _selectedBarIndex;
+                final date = last7Dates[index];
+                final dayLabel = DateFormat('E').format(date); // Mon, Tue, etc.
+                final dayNumber = DateFormat('d').format(date);
+                final spendAmount = dailyTotals[index];
 
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedBarIndex = index),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // Tooltip on Selected Bar
-                          if (isSelected)
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 6),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.pitchDark,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withValues(alpha: 0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                '\$${spendAmount.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          else
-                            const SizedBox(height: 21),
+                // Check if this day is the highest spender of the week
+                final isHighestDay = maxSpend > 0 && spendAmount == maxSpend;
 
-                          // Pill Bar (Green when selected)
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: 28,
-                            height: 85 * heightRatio,
-                            decoration: BoxDecoration(
-                              gradient: isSelected ? AppColors.primaryGradient : null,
-                              color: isSelected ? null : AppColors.primaryMint.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+                // Dynamic height based on proportion of max spend
+                final heightRatio = maxSpend > 0
+                    ? (spendAmount / maxSpend).clamp(0.18, 1.0)
+                    : 0.18;
 
-                          // Date Labels (e.g. "24\nMar")
-                          Column(
-                            children: [
-                              Text(
-                                dayNumber,
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? (isDark ? AppColors.white : AppColors.black)
-                                      : textSecondary,
-                                  fontSize: 11,
-                                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                monthStr,
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? AppColors.primaryMint
-                                      : textSecondary.withValues(alpha: 0.7),
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedBarIndex = index),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Tooltip showing actual amount when selected
+                      if (isSelected)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.pitchDark,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.black.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
+                          child: Text(
+                            'Rs ${spendAmount.toStringAsFixed(0)}',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(height: 21),
+
+                      // Pill Bar: Solid Mint Gradient if Maximum Day or Selected!
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: 32,
+                        height: 85 * heightRatio,
+                        decoration: BoxDecoration(
+                          gradient: (isHighestDay || isSelected)
+                              ? AppColors.primaryGradient
+                              : null,
+                          color: (isHighestDay || isSelected)
+                              ? null
+                              : AppColors.primaryMint.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: (isHighestDay || isSelected)
+                              ? [
+                            BoxShadow(
+                              color: AppColors.primaryMint.withValues(alpha: 0.35),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ]
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Day & Date Labels
+                      Column(
+                        children: [
+                          Text(
+                            dayLabel,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? (isDark ? AppColors.white : AppColors.black)
+                                  : textSecondary,
+                              fontSize: 11,
+                              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            dayNumber,
+                            style: TextStyle(
+                              color: (isHighestDay || isSelected)
+                                  ? AppColors.primaryMint
+                                  : textSecondary.withValues(alpha: 0.7),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  );
-                }),
-              ),
+                    ],
+                  ),
+                );
+              }),
             ),
           ),
 
