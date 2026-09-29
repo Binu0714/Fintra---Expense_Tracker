@@ -1,7 +1,9 @@
+import 'package:fintra_mobile_app/data/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_typography.dart';
+import '../widgets/common/fintra_dialog.dart';
+import 'main_shell_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -17,6 +19,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  final AuthRepository _authRepository = AuthRepository();
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
@@ -30,23 +34,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _onSignUp() async {
+  Future<void> _onSignUp() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(milliseconds: 1400));
+    try {
+      await _authRepository.signUpWithEmail(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
 
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+      if (!mounted) return;
+      setState(() => _isLoading = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Account created successfully!'),
-        backgroundColor: AppColors.primaryMint,
-      ),
-    );
-    Navigator.pop(context);
+      await FintraDialog.show(
+        context,
+        type: DialogType.success,
+        title: 'Account Created!',
+        message: 'Welcome to Fintra, ${_nameController.text.trim()}! Your account has been registered successfully.',
+        confirmText: 'Go to Dashboard',
+        onConfirm: () {},
+      );
+
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MainShellScreen()),
+            (route) => false,
+      );
+    } catch (errorMessage) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      FintraDialog.show(
+        context,
+        type: DialogType.danger,
+        title: 'Sign Up Failed',
+        message: errorMessage.toString(),
+        confirmText: 'Try Again',
+        onConfirm: () {},
+      );
+    }
   }
 
   @override
@@ -136,6 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+
                         Text(
                           'Create Account',
                           textAlign: TextAlign.center,
@@ -149,6 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: textSecondary),
                         ),
+
                         const SizedBox(height: 24),
 
                         // Name Field
@@ -161,7 +193,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             labelStyle: TextStyle(color: textSecondary, fontSize: 14),
                             prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.primaryMint, size: 20),
                           ),
+
                           validator: (val) => (val == null || val.trim().length < 2) ? 'Please enter your name' : null,
+
                         ),
 
                         const SizedBox(height: 16),
@@ -177,6 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             labelStyle: TextStyle(color: textSecondary, fontSize: 14),
                             prefixIcon: const Icon(Icons.email_outlined, color: AppColors.primaryMint, size: 20),
                           ),
+
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) return 'Email is required';
                             if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
@@ -184,6 +219,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             }
                             return null;
                           },
+
                         ),
 
                         const SizedBox(height: 16),
@@ -207,11 +243,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                             ),
                           ),
+
                           validator: (val) {
                             if (val == null || val.isEmpty) return 'Password is required';
                             if (val.length < 6) return 'Password must be at least 6 characters';
                             return null;
                           },
+
                         ),
 
                         const SizedBox(height: 16),
@@ -236,11 +274,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                             ),
                           ),
+
                           validator: (val) {
                             if (val == null || val.isEmpty) return 'Confirm your password';
                             if (val != _passwordController.text) return 'Passwords do not match';
                             return null;
                           },
+
                         ),
 
                         const SizedBox(height: 24),
