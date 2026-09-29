@@ -1,3 +1,4 @@
+import 'package:fintra_mobile_app/presentation/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../widgets/common/custom_sidebar.dart';
@@ -20,7 +21,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     const DashboardScreen(),
     const ExpensesScreen(),
     const CategoriesScreen(),
-    const PlaceholderPage(title: 'Settings & Preferences'),
+    const SettingsScreen(),
   ];
 
   final List<String> _titles = [
