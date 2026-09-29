@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_controller.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../widgets/common/fintra_dialog.dart';
 import '../widgets/settings/edit_profile_bottom_sheet.dart';
 import '../widgets/settings/settings_action_tile.dart';
 import '../widgets/settings/settings_section_card.dart';
 import '../widgets/settings/settings_toggle_tile.dart';
 import '../widgets/settings/user_profile_card.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final String userName;
@@ -54,36 +57,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _onLogout() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(ctx).brightness == Brightness.dark
-            ? AppColors.darkCard
-            : AppColors.lightCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w800)),
-        content: const Text('Are you sure you want to log out of Fintra?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.darkTextSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logged out')),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Log Out',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
+    FintraDialog.show(
+      context,
+      type: DialogType.danger,
+      title: 'Log Out of Fintra',
+      message: 'Are you sure you want to log out? Your synced records remain safe in Firebase.',
+      confirmText: 'Log Out',
+      cancelText: 'Stay',
+      onConfirm: () async {
+        final authRepo = AuthRepository();
+        await authRepo.signOut();
+
+        if (!mounted) return;
+
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false,
+        );
+      },
     );
   }
 

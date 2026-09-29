@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/animations/staggered_slide_fade.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../screens/login_screen.dart';
+import 'fintra_dialog.dart';
+import '../../../data/repositories/auth_repository.dart';
 
 class CustomSidebar extends StatelessWidget {
   final int selectedIndex;
@@ -71,7 +74,6 @@ class CustomSidebar extends StatelessWidget {
               const SizedBox(height: 16),
 
               // 2. Embossed Premium User Card
-              // 2. Embossed Premium User Card (Dynamic from Firebase)
               StaggeredSlideFade(
                 index: 1,
                 duration: const Duration(milliseconds: 500),
@@ -186,7 +188,29 @@ class CustomSidebar extends StatelessWidget {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        Navigator.pop(context);
+
+                        FintraDialog.show(
+                          context,
+                          type: DialogType.danger,
+                          title: 'Log Out of Fintra',
+                          message: 'Are you sure you want to log out? You will need to sign in again to access your expenses.',
+                          confirmText: 'Log Out',
+                          cancelText: 'Stay',
+                          onConfirm: () async {
+                            final authRepo = AuthRepository();
+                            await authRepo.signOut();
+
+                            if (!context.mounted) return;
+
+                            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                  (route) => false,
+                            );
+                          },
+                        );
+                      },
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),

@@ -408,7 +408,7 @@ class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
                 child: Container(
                   height: 54,
                   decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
+                    color: AppColors.primaryMint ,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(

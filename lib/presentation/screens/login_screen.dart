@@ -252,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           height: 52,
                           decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
+                            color: AppColors.primaryMint,
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(

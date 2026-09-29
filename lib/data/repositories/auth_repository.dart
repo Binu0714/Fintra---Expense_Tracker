@@ -75,6 +75,7 @@ class AuthRepository {
     return _firestore.collection('users').doc(user.uid).snapshots();
   }
 
+  // update
   Future<void> updateUserProfile({
     required String name,
     required String email,
@@ -93,6 +94,11 @@ class AuthRepository {
     } catch (e) {
       throw 'Failed to update profile: $e';
     }
+  }
+
+  // sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 
   String _handleAuthException(FirebaseAuthException e) {
