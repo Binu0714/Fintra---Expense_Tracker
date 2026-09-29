@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../widgets/common/custom_sidebar.dart';
 import '../widgets/common/custom_bottom_nav.dart';
+import 'categories_screen.dart';
 import 'dashboard_screen.dart';
 import 'expenses_screen.dart';
 
@@ -18,7 +19,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   final List<Widget> _pages = [
     const DashboardScreen(),
     const ExpensesScreen(),
-    const PlaceholderPage(title: 'Categories Management'),
+    const CategoriesScreen(),
     const PlaceholderPage(title: 'Settings & Preferences'),
   ];
 
