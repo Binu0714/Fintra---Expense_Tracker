@@ -75,22 +75,41 @@ class AuthRepository {
     return _firestore.collection('users').doc(user.uid).snapshots();
   }
 
-  // update
+  // update user profile
   Future<void> updateUserProfile({
     required String name,
     required String email,
   }) async {
     try {
       final user = _auth.currentUser;
-      if (user == null) throw Exception('User not logged in');
+      if (user == null) throw Exception('No authenticated user found.');
 
-      await user.updateDisplayName(name.trim());
+      final formattedName = name.trim();
+      final formattedEmail = email.trim().toLowerCase();
 
+      // 1. Update Display Name in Firebase Auth
+      if (user.displayName != formattedName) {
+        await user.updateDisplayName(formattedName);
+      }
+
+      // 2. Update Login Email in Firebase Auth
+      if (user.email?.toLowerCase() != formattedEmail) {
+        // Updates the actual login credential in Firebase Authentication
+        await user.verifyBeforeUpdateEmail(formattedEmail);
+        // Note: If you are using legacy Firebase Auth, you can use: await user.updateEmail(formattedEmail);
+      }
+
+      // 3. Update Firestore Document
       await _firestore.collection('users').doc(user.uid).update({
-        'name': name.trim(),
-        'email': email.trim().toLowerCase(),
+        'name': formattedName,
+        'email': formattedEmail,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw 'For security, please log out and log back in before changing your email.';
+      }
+      throw e.message ?? 'Failed to update email in Firebase Auth.';
     } catch (e) {
       throw 'Failed to update profile: $e';
     }

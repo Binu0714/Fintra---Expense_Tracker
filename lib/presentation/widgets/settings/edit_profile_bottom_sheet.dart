@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../../core/animations/staggered_slide_fade.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/repositories/auth_repository.dart';
+import '../common/fintra_dialog.dart';
 
 class EditProfileBottomSheet extends StatefulWidget {
   final String currentName;
   final String currentEmail;
-  final Function(String name, String email) onSave;
+  final VoidCallback? onProfileUpdated;
 
   const EditProfileBottomSheet({
     super.key,
     required this.currentName,
     required this.currentEmail,
-    required this.onSave,
+    this.onProfileUpdated,
   });
 
   @override
@@ -20,6 +22,8 @@ class EditProfileBottomSheet extends StatefulWidget {
 
 class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
   final _formKey = GlobalKey<FormState>();
+  final AuthRepository _authRepository = AuthRepository();
+
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   bool _isSubmitting = false;
@@ -38,21 +42,52 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
     super.dispose();
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
-    await Future.delayed(const Duration(milliseconds: 350));
-    if (!mounted) return;
 
-    widget.onSave(_nameController.text.trim(), _emailController.text.trim());
-    Navigator.pop(context);
+    try {
+      final newName = _nameController.text.trim();
+      final newEmail = _emailController.text.trim();
+
+      await _authRepository.updateUserProfile(
+        name: newName,
+        email: newEmail,
+      );
+
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      Navigator.pop(context);
+      widget.onProfileUpdated?.call();
+
+      FintraDialog.show(
+        context,
+        type: DialogType.success,
+        title: 'Profile Updated',
+        message: 'Your account information has been saved successfully.',
+        confirmText: 'Done',
+        onConfirm: () {},
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      FintraDialog.show(
+        context,
+        type: DialogType.danger,
+        title: 'Update Failed',
+        message: e.toString(),
+        confirmText: 'Try Again',
+        onConfirm: () {},
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? AppColors.darkCard : AppColors.lightCard;
     final cardBorder = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
@@ -84,7 +119,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Pill drag handle
+              // 1. Pull Handle
               Center(
                 child: Container(
                   width: 44,
@@ -97,7 +132,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 16),
 
-              // 2. Title Row with Close
+              // 2. Header
               StaggeredSlideFade(
                 index: 0,
                 child: Row(
@@ -122,7 +157,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 16),
 
-              // 3. Centered Avatar Section (Matching UserProfileCard)
+              // 3. Avatar Section
               StaggeredSlideFade(
                 index: 1,
                 child: Center(
@@ -154,7 +189,6 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                               ),
                             ),
                           ),
-                          // Floating Blue Pencil Badge
                           Positioned(
                             bottom: 2,
                             right: 2,
@@ -167,42 +201,23 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                                   color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
                                   width: 3,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.accentBlue.withValues(alpha: 0.35),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
                               ),
-                              child: const Icon(
-                                Icons.edit_rounded,
-                                size: 16,
-                                color: Colors.white,
-                              ),
+                              child: const Icon(Icons.edit_rounded, size: 16, color: Colors.white),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _nameController.text.isNotEmpty ? _nameController.text : 'Mateen',
+                        _nameController.text.isNotEmpty ? _nameController.text : widget.currentName,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _emailController.text.isNotEmpty ? _emailController.text : 'mateen@fintra.app',
+                        _emailController.text.isNotEmpty ? _emailController.text : widget.currentEmail,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: textSecondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(color: textSecondary, fontSize: 12, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -217,7 +232,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                 child: TextFormField(
                   controller: _nameController,
                   onChanged: (_) => setState(() {}),
-                  style: TextStyle(color: textPrimary, fontSize: 15),
+                  style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
                   decoration: const InputDecoration(
                     labelText: 'Full Name',
                     prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.primaryMint),
@@ -234,7 +249,7 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                   controller: _emailController,
                   onChanged: (_) => setState(() {}),
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(color: textPrimary, fontSize: 15),
+                  style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
                   decoration: const InputDecoration(
                     labelText: 'Email Address',
                     prefixIcon: Icon(Icons.email_outlined, color: AppColors.primaryMint),
@@ -250,17 +265,17 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
               ),
               const SizedBox(height: 28),
 
-              // 6. Save Action Button
+              // 6. Solid Green Save Button
               StaggeredSlideFade(
                 index: 4,
                 child: Container(
                   height: 54,
                   decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
+                    color: const Color(0xFF00C853),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primaryMint.withValues(alpha: 0.35),
+                        color: const Color(0xFF00C853).withValues(alpha: 0.35),
                         blurRadius: 16,
                         offset: const Offset(0, 6),
                       ),
@@ -277,12 +292,12 @@ class _EditProfileBottomSheetState extends State<EditProfileBottomSheet> {
                         ? const SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.black),
+                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
                     )
                         : const Text(
-                      'Save Profile',
+                      'Save Profile Changes',
                       style: TextStyle(
-                        color: AppColors.black,
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),

@@ -26,8 +26,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _userName = 'Mateen';
-  String _email = 'mateen@fintra.app';
   bool _notificationsEnabled = true;
 
   late bool _isDarkMode = ThemeController.isDark;
@@ -38,20 +36,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => EditProfileBottomSheet(
-        currentName: _userName,
-        currentEmail: _email,
-        onSave: (name, email) {
-          setState(() {
-            _userName = name;
-            _email = email;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated successfully!'),
-              backgroundColor: AppColors.primaryMint,
-            ),
-          );
-        },
+        currentName: widget.userName,
+        currentEmail: widget.userEmail,
       ),
     );
   }

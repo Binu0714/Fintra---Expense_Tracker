@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
-import 'login_screen.dart';
+import 'app_session_gate.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,9 +36,9 @@ class _SplashScreenState extends State<SplashScreen>
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-        const LoginScreen(),
+            const AppSessionGate(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
+            return FadeTransition(opacity: animation, child: child);
         },
         transitionDuration: const Duration(milliseconds: 400),
       ),
