@@ -24,18 +24,12 @@ class CustomBottomNav extends StatelessWidget {
         spreadRadius: 2,
         offset: const Offset(0, 8),
       ),
-      if (isDark)
-        BoxShadow(
-          color: AppColors.primaryMint.withValues(alpha: 0.04),
-          blurRadius: 10,
-          offset: const Offset(0, -1),
-        ),
     ];
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
@@ -58,40 +52,44 @@ class CustomBottomNav extends StatelessWidget {
   Widget _buildTab(int index, IconData icon, IconData activeIcon, String label, bool isDark) {
     final isSelected = currentIndex == index;
 
-    return InkWell(
-      onTap: () => onTabSelected(index),
-      borderRadius: BorderRadius.circular(16),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primaryMint.withValues(alpha: 0.12)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: isSelected
-                  ? AppColors.primaryMint
-                  : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
-              size: 22,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
+    return Expanded(
+      child: InkWell(
+        onTap: () => onTabSelected(index),
+        borderRadius: BorderRadius.circular(16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.primaryMint.withValues(alpha: 0.12)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isSelected ? activeIcon : icon,
                 color: isSelected
                     ? AppColors.primaryMint
                     : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                size: 20,
               ),
-            ),
-          ],
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected
+                      ? AppColors.primaryMint
+                      : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
+                  fontSize: 10.5,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );
