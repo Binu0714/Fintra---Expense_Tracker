@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-class ExpenseSearchBar extends StatelessWidget {
+class ExpenseSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
@@ -12,6 +12,19 @@ class ExpenseSearchBar extends StatelessWidget {
     required this.onChanged,
     required this.onClear,
   });
+
+  @override
+  State<ExpenseSearchBar> createState() => _ExpenseSearchBarState();
+}
+
+class _ExpenseSearchBarState extends State<ExpenseSearchBar> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +48,21 @@ class ExpenseSearchBar extends StatelessWidget {
         ],
       ),
       child: TextField(
-        controller: controller,
-        onChanged: onChanged,
+        controller: widget.controller,
+        focusNode: _focusNode,
+        onChanged: widget.onChanged,
         style: TextStyle(color: textPrimary, fontSize: 14),
         decoration: InputDecoration(
           hintText: 'Search expenses by title or note...',
           hintStyle: TextStyle(color: textSecondary, fontSize: 13),
           prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primaryMint, size: 22),
-          suffixIcon: controller.text.isNotEmpty
+          suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
             icon: Icon(Icons.close_rounded, color: textSecondary, size: 18),
-            onPressed: onClear,
+            onPressed: () {
+              widget.onClear();
+              _focusNode.unfocus();
+            },
           )
               : null,
           border: InputBorder.none,

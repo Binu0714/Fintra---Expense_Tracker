@@ -4,15 +4,17 @@ import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/category_type.dart';
 import '../../data/models/expense_model.dart';
+import '../../data/repositories/expense_repository.dart';
+import '../widgets/common/fintra_dialog.dart';
 
 class AddEditExpenseBottomSheet extends StatefulWidget {
   final ExpenseModel? existingExpense;
-  final ValueChanged<ExpenseModel> onSave;
+  final VoidCallback? onExpenseAdded;
 
   const AddEditExpenseBottomSheet({
     super.key,
     this.existingExpense,
-    required this.onSave,
+    this.onExpenseAdded,
   });
 
   @override
@@ -21,6 +23,8 @@ class AddEditExpenseBottomSheet extends StatefulWidget {
 
 class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
   final _formKey = GlobalKey<FormState>();
+  final ExpenseRepository _expenseRepository = ExpenseRepository();
+
   late TextEditingController _titleController;
   late TextEditingController _amountController;
   late TextEditingController _noteController;
@@ -49,24 +53,69 @@ class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
     super.dispose();
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
-    await Future.delayed(const Duration(milliseconds: 400));
-    if (!mounted) return;
 
-    final newExpense = ExpenseModel(
-      id: widget.existingExpense?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      title: _titleController.text.trim(),
-      amount: double.parse(_amountController.text.trim()),
-      category: _selectedCategory,
-      date: _selectedDate,
-      note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
-    );
+    try {
+      final isNew = widget.existingExpense == null;
 
-    widget.onSave(newExpense);
-    Navigator.pop(context);
+      if (isNew) {
+        // 1. Add New
+        final newExpense = ExpenseModel(
+          id: '',
+          title: _titleController.text.trim(),
+          amount: double.parse(_amountController.text.trim()),
+          category: _selectedCategory,
+          date: _selectedDate,
+          note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+        );
+        await _expenseRepository.addExpense(newExpense);
+      } else {
+        // 2. Update Existing
+        final updatedExpense = ExpenseModel(
+          id: widget.existingExpense!.id,
+          title: _titleController.text.trim(),
+          amount: double.parse(_amountController.text.trim()),
+          category: _selectedCategory,
+          date: _selectedDate,
+          note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+        );
+        await _expenseRepository.updateExpense(updatedExpense);
+      }
+
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      Navigator.pop(context);
+      widget.onExpenseAdded?.call();
+
+
+      FintraDialog.show(
+        context,
+        type: DialogType.success,
+        title: isNew ? 'Expense Added!' : 'Expense Updated!',
+        message: isNew
+            ? 'Your expense of \$${_amountController.text.trim()} has been recorded.'
+            : 'Your expense "${_titleController.text.trim()}" has been updated.',
+        confirmText: 'Done',
+        onConfirm: () {},
+      );
+
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      FintraDialog.show(
+        context,
+        type: DialogType.danger,
+        title: 'Error',
+        message: e.toString(),
+        confirmText: 'Okay',
+        onConfirm: () {},
+      );
+    }
   }
 
   @override
@@ -181,7 +230,7 @@ class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
                             letterSpacing: -1,
                           ),
                           decoration: InputDecoration(
-                            prefixText: '\$ ',
+                            prefixText: '\RS ',
                             prefixStyle: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w700,
@@ -198,12 +247,14 @@ class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
                             focusedBorder: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
                           ),
+
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) return 'Enter an amount';
                             final parsed = double.tryParse(val.trim());
                             if (parsed == null || parsed <= 0) return 'Enter a valid amount';
                             return null;
                           },
+
                         ),
                       ),
                     ],

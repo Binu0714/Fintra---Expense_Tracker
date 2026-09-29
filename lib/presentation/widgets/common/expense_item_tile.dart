@@ -92,6 +92,7 @@ class ExpenseItemTile extends StatelessWidget {
               const SizedBox(width: 14),
 
               // 2. Title, Category Pill & Timestamp
+              // 2. Title, Category Pill & Timestamp
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,43 +108,48 @@ class ExpenseItemTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
+
+                    // Responsive Subtitle Row that never overflows
                     Row(
                       children: [
                         // Category Tag Pill
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            expense.category.label,
-                            style: TextStyle(
-                              color: textSecondary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              expense.category.label,
+                              style: TextStyle(
+                                color: textSecondary,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
 
-                        // Date & Time
+                        // Date & Time (will not push beyond bounds)
                         Text(
                           '$dateStr • $timeStr',
                           style: TextStyle(color: textSecondary, fontSize: 11, fontWeight: FontWeight.w500),
                         ),
 
-                        // Note Indicator Dot
+                        // Note Indicator
                         if (expense.note != null && expense.note!.isNotEmpty) ...[
-                          const SizedBox(width: 6),
-                          Icon(Icons.notes_rounded, size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Icon(Icons.notes_rounded, size: 12, color: textSecondary),
                         ],
                       ],
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(width: 12),
 
               // 3. Amount Badge

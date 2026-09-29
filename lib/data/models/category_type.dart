@@ -8,6 +8,7 @@ enum CategoryType {
   bills('Bills & Utilities', Icons.receipt_long_rounded, Color(0xFFFF6B6B)),
   entertainment('Entertainment', Icons.movie_filter_rounded, Color(0xFF9B59B6)),
   health('Healthcare', Icons.favorite_rounded, Color(0xFFFF7675)),
+  vehicle('Vehicle', Icons.directions_car_rounded, Color(0xFF2E86DE)),
   other('Other', Icons.category_rounded, AppColors.primaryMint);
 
   final String label;
