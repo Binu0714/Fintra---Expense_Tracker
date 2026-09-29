@@ -23,7 +23,7 @@ class ExpenseItemTile extends StatelessWidget {
     final cardBg = isDark ? AppColors.darkCard : AppColors.lightCard;
     final cardBorder = isDark ? AppColors.darkBorder : AppColors.lightBorder;
 
-    final currency = NumberFormat.currency(symbol: '-\$', decimalDigits: 2);
+    final currency = NumberFormat.currency(symbol: '-\RS. ', decimalDigits: 2);
     final timeStr = DateFormat('h:mm a').format(expense.date);
     final dateStr = DateFormat('d MMM').format(expense.date);
 
@@ -91,7 +91,6 @@ class ExpenseItemTile extends StatelessWidget {
               ),
               const SizedBox(width: 14),
 
-              // 2. Title, Category Pill & Timestamp
               // 2. Title, Category Pill & Timestamp
               Expanded(
                 child: Column(

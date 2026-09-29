@@ -24,7 +24,7 @@ class DateFilterHeader extends StatelessWidget {
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
     final cardBg = isDark ? AppColors.darkCard : AppColors.lightCard;
     final cardBorder = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final currency = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currency = NumberFormat.currency(symbol: '\RS. ', decimalDigits: 2);
 
     String dateText = 'All Time';
     if (selectedDateRange != null) {
