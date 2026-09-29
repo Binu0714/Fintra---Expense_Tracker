@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/animations/staggered_slide_fade.dart';
 import '../../core/theme/app_colors.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,7 +18,6 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // 2-second linear loading progress
     _progressController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
@@ -32,17 +32,17 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _navigateToLogin() {
     if (!mounted) return;
-    // Navigator.pushReplacement(
-    //   context,
-    //   PageRouteBuilder(
-    //     pageBuilder: (context, animation, secondaryAnimation) =>
-    //     const LoginScreen(),
-    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-    //       return FadeTransition(opacity: animation, child: child);
-    //     },
-    //     transitionDuration: const Duration(milliseconds: 400),
-    //   ),
-    // );
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+        const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   @override
@@ -69,6 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
                 logoAsset,
                 width: 240,
                 fit: BoxFit.contain,
+
                 errorBuilder: (context, error, stackTrace) => Container(
                   width: 140,
                   height: 140,
@@ -87,11 +88,12 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                 ),
+
               ),
             ),
             const SizedBox(height: 48),
 
-            // Smooth 2s Progress Line Indicator
+            // Progress Line Indicator
             StaggeredSlideFade(
               index: 1,
               duration: const Duration(milliseconds: 500),
