@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 class TotalExpensesHeroCard extends StatelessWidget {
-  final String amount;
-  final String percentageChange;
+  final double totalAmount;
+  final String title;
+  final String badgeText;
+  final bool isExpense;
 
   const TotalExpensesHeroCard({
     super.key,
-    this.amount = '\$42,593.00',
-    this.percentageChange = '-12.5%',
+    required this.totalAmount,
+    this.title = 'Total Expenses',
+    this.badgeText = 'This Month',
+    this.isExpense = true,
   });
 
   @override
@@ -32,9 +36,9 @@ class TotalExpensesHeroCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Total Expenses',
-                style: TextStyle(
+              Text(
+                title,
+                style: const TextStyle(
                   color: AppColors.darkTextSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -51,7 +55,7 @@ class TotalExpensesHeroCard extends StatelessWidget {
                     const Icon(Icons.trending_down_rounded, color: AppColors.primaryMint, size: 14),
                     const SizedBox(width: 4),
                     Text(
-                      percentageChange,
+                      badgeText,
                       style: const TextStyle(
                         color: AppColors.primaryMint,
                         fontSize: 11,
@@ -63,10 +67,10 @@ class TotalExpensesHeroCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Center(
             child: Text(
-              amount,
+              'Rs. ${totalAmount.toStringAsFixed(2)}',
               style: const TextStyle(
                 color: AppColors.white,
                 fontSize: 34,

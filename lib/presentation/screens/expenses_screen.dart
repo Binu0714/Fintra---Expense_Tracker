@@ -207,8 +207,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                           StaggeredSlideFade(
                             index: 0,
                             child: TotalExpensesHeroCard(
-                              amount: 'Rs. ${totalFiltered.toStringAsFixed(2)}',
-                              percentageChange: '${filteredList.length} items',
+                              totalAmount: totalFiltered,
+                              title: 'Filtered Total',
+                              badgeText: '${filteredList.length} items',
                             ),
                           ),
 
