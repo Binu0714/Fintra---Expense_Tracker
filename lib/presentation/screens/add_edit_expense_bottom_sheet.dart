@@ -230,6 +230,8 @@ class _AddEditExpenseBottomSheetState extends State<AddEditExpenseBottomSheet> {
                             letterSpacing: -1,
                           ),
                           decoration: InputDecoration(
+                            filled: false,
+                            fillColor: Colors.transparent,
                             prefixText: '\RS ',
                             prefixStyle: TextStyle(
                               fontSize: 32,

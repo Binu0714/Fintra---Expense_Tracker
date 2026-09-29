@@ -10,8 +10,8 @@ class StaggeredSlideFade extends StatefulWidget {
     super.key,
     required this.child,
     this.index = 0,
-    this.duration = const Duration(milliseconds: 500),
-    this.verticalOffset = -30.0, // Slides downwards from top
+    this.duration = const Duration(milliseconds: 550),
+    this.verticalOffset = -22.0,
   });
 
   @override
@@ -32,20 +32,18 @@ class _StaggeredSlideFadeState extends State<StaggeredSlideFade>
       duration: widget.duration,
     );
 
-    _fadeAnimation = CurvedAnimation(
+    final curved = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     );
 
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
     _slideAnimation = Tween<Offset>(
       begin: Offset(0, widget.verticalOffset / 100),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(curved);
 
-    Future.delayed(Duration(milliseconds: widget.index * 120), () {
+    Future.delayed(Duration(milliseconds: (widget.index * 65).clamp(0, 450)), () {
       if (mounted) {
         _controller.forward();
       }

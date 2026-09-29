@@ -139,10 +139,29 @@ class _MainShellScreenState extends State<MainShellScreen> {
               const SizedBox(width: 8),
             ],
           ),
-          body: IndexedStack(
-            index: _currentIndex,
-            children: pages,
+
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 280),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.02),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: KeyedSubtree(
+              key: ValueKey<int>(_currentIndex),
+              child: pages[_currentIndex],
+            ),
           ),
+
           bottomNavigationBar: CustomBottomNav(
             currentIndex: _currentIndex,
             onTabSelected: (index) => setState(() => _currentIndex = index),

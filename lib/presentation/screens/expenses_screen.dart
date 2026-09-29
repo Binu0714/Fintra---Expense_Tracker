@@ -310,7 +310,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: StaggeredSlideFade(
-                      index: index,
+                      key: ValueKey(expense.id),
+                      index: (index + 3).clamp(0, 8),
                       child: ExpenseItemTile(
                         expense: expense,
                         onTap: () => _openAddEditSheet(expense),
