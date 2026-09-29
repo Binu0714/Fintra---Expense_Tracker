@@ -11,13 +11,12 @@ class AuthRepository {
   })  : _auth = auth ?? FirebaseAuth.instance,
         _firestore = firestore ?? FirebaseFirestore.instance;
 
-  // Realtime stream of auth changes (logged in / logged out)
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Current logged in user object
   User? get currentUser => _auth.currentUser;
 
-  /// Creates a new user with Email and Password
+  // signup
+
   Future<UserCredential> signUpWithEmail({
     required String name,
     required String email,
@@ -35,7 +34,7 @@ class AuthRepository {
         // 2. Set the display name in Firebase Auth
         await user.updateDisplayName(name.trim());
 
-        // 3. Save user profile document in Firestore: /users/{uid}
+        // 3. Save user profile document in Firestore
         await _firestore.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'name': name.trim(),
@@ -46,26 +45,47 @@ class AuthRepository {
 
       return credential;
     } on FirebaseAuthException catch (e) {
-      // Return user-friendly error messages
       throw _handleAuthException(e);
     } catch (e) {
       throw 'An unexpected error occurred. Please try again.';
     }
   }
 
-  // Translates raw Firebase error codes into clean text for UI
+  // Login
+
+  Future<UserCredential> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password,
+      );
+      return credential;
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw 'An unexpected error occurred. Please try again.';
+    }
+  }
+
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
-      case 'email-already-in-use':
-        return 'This email address is already registered. Please log in.';
+      case 'user-not-found':
+        return 'No account found with this email. Please sign up.';
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Invalid email or password. Please try again.';
+      case 'user-disabled':
+        return 'This account has been disabled. Please contact support.';
       case 'invalid-email':
         return 'The email address is badly formatted.';
-      case 'weak-password':
-        return 'Password is too weak. Please use at least 6 characters.';
       case 'network-request-failed':
         return 'No internet connection. Please check your network.';
       default:
-        return e.message ?? 'Registration failed. Please try again.';
+        return e.message ?? 'Authentication failed. Please try again.';
     }
   }
+
 }
